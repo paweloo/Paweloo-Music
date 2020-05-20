@@ -75,7 +75,7 @@ W przypadku braku zdjęcia profilowego, przypisywane jest domyślne.
 ```
 Na chwilę obecną dynamicznie pobierane są tylko okładki, tytuły i artyści z kategorii "New Releases"
 
-<img src="/src/img/screenshots/PM6.jpg" title="Paweloo Music__mainPawel" height="500px">
+<img src="/src/img/screenshots/PM6.jpg" title="Paweloo Music__lNewReleasees" height="500px">
 
 WhiteWrapper.js
 ```
@@ -163,7 +163,7 @@ class WelcomeParagraph extends React.Component {
 
 ## Ustawienia wyglądu
 
-<img src="/src/img/screenshots/PM2.jpg" title="Paweloo Music__mainPawel" height="500px">
+<img src="/src/img/screenshots/PM2.jpg" title="Paweloo Music__mainPawelSettings" height="500px">
 
 Pierwsze 2 opcje pozwalające na zmianę nazwy użytkownika oraz zdjęcia profilowego nie są jeszcze dostępne.
 
@@ -221,7 +221,7 @@ WhiteWrapper.js
 background-color: ${({ theme }) => theme.body};
 ```
 
-<img src="/src/img/screenshots/PM3.jpg" title="Paweloo Music__mainPawel" height="500px"> <img src="/src/img/screenshots/PM4.jpg" title="Paweloo Music__mainPawel" height="500px">
+<img src="/src/img/screenshots/PM3.jpg" title="Paweloo Music__theme" height="500px"> <img src="/src/img/screenshots/PM4.jpg" title="Paweloo Music__color" height="500px">
 
 ## Pasek wyszukiwania
 
@@ -245,3 +245,5 @@ const PurpleBack = styled.div`
     `};
 `;
 ```
+
+<img src="/src/img/screenshots/PM5.jpg" title="Paweloo Music__searchBar" height="500px">
