@@ -1,68 +1,247 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Paweloo Music
 
-## Available Scripts
+Jest to projekt aplikacji muzycznej bazującej na API Spotify. Aplikacja nie jest jeszcze w pełni dynamiczna, ale wykorzystuje kilka elementów z API Spotify.
 
-In the project directory, you can run:
+## Logowanie
+W celu przetestowania aplikacji należy zalogować się na swoje konto Spotify (poniżej dane konta testowego)<br>
+login: nxj47415@eoopy.com<br>
+hasło: test123123
 
-### `yarn start`
+Aby projekt załadował się poprawnie, istotnym elementem jest otwarcie aplikacji na porcie :3000, gdyż został on dodany do białej listy w celu przekierowania do niego po udanej weryfikacji
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+<img src="/src/img/screenshots/PM8.jpg" title="Spotify_whitelist" height="250px">
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+W pierwszym kroku wywoływana jest funkcja Authenticate.js, która sprawdza czy w adresie URL znajduje się token odpowiedzialny za autoryzację w Spotify. Jeśli token zostanie odczytany to użytkownik zostaje przekierowany do strony z głównym ekranem aplikacji, w przeciwnym wypadku zostaje przekierowany na stronę logowania Spotify a po udanej autoryzacji powraca do ekranu głównego aplikacji.
 
-### `yarn test`
+```
+export default function () {
+  let token = window.location.hash.substr(1);
+  if (token) {
+    const o = Object.fromEntries(new URLSearchParams(token));
+    return o.access_token;
+  } else {
+    redirectToSpotifyAuthentication();
+  }
+}
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+function redirectToSpotifyAuthentication() {
+  const authEndpoint = "https://accounts.spotify.com/authorize";
+  const clientId = "*****************************";
+  const redirectUri = `${window.location.protocol}//${window.location.host}`;
+  let query = `client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&show_dialog=true`;
+  window.location = `${authEndpoint}?${query}`;
+}
+```
 
-### `yarn build`
+Po pomyślnym zalogowaniu się, oczom użytkownika ukazjue się główny interfejs aplikacji.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+<img src="/src/img/screenshots/PM1.jpg" title="Paweloo Music__mainPawel" height="500px"> <img src="/src/img/screenshots/PM7.jpg" title="Paweloo Music_main_Tom" height="500px">
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Pobieranie danych
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Imię oraz zdjęcie profilowe pobierane są pobierane z API Spotify oraz przypisywane do danego stanu.
 
-### `yarn eject`
+```
+componentDidMount() {
+    fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({
+          name: data.display_name,
+          profilePic: data.images.map(function (Object) {
+            return Object.url;
+          }),
+       });
+   });
+}
+``` 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+W przypadku braku zdjęcia profilowego, przypisywane jest domyślne.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+<Profile
+      alt={props.name}
+      style={{
+        backgroundImage: `url(${
+          props.picture.length !== 0 ? props.picture : defaultProf
+        })`,
+      }}
+      onClick={props.isOpen}
+      color={backColor} />
+```
+Na chwilę obecną dynamicznie pobierane są tylko okładki, tytuły i artyści z kategorii "New Releases"
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+<img src="/src/img/screenshots/PM6.jpg" title="Paweloo Music__mainPawel" height="500px">
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+WhiteWrapper.js
+```
+componentDidMount() {
+    fetch("https://api.spotify.com/v1/browse/new-releases", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        this.setState({ spotifyTracks: data.albums.items });
+      });
+  }
+  .
+  .
+  .
+  <SpotifyCoversContainer items={this.state.spotifyTracks} />
+  ```
+  
+  SpotifyCoversContainer.js
+  ```
+  const SpotifyCoversContainer = (props) => (
+  <TrackWrapper>
+    {props.items.map((item) => (
+      <SpotifyCovers key={item.name} {...item} />
+    ))}
+  </TrackWrapper>
+);
+```
 
-## Learn More
+SpotifyCovers.js
+```
+const SpotifyCovers = (props) => (
+  <TrackWrapper>
+    <Track
+      alt={props.name}
+      style={{
+        backgroundImage: `url(${props.images[1].url})`,
+      }}
+    ></Track>
+    <StyledTitle>{props.name}</StyledTitle>
+    <StyledArtist>
+      {props.artists.map(function (object) {
+        return object.name;
+      })}
+    </StyledArtist>
+  </TrackWrapper>
+);
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Powitanie przed imieniem zmienia się w zależności od pory dnia/nocy.
+```
+let date = new Date();
+let hours = date.getHours();
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+class WelcomeParagraph extends React.Component {
+  state = {
+    night: "Good night",
+    morning: "Good morning",
+    afternoon: "Good afternoon",
+    evening: "Good evening",
+  };
 
-### Code Splitting
+  current = this.state.evening;
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+  render() {
+    if (hours < 4) {
+      this.current = this.state.night;
+    } else if (hours < 12) {
+      this.current = this.state.morning;
+    } else if (hours < 19) {
+      this.current = this.state.afternoon;
+    } else {
+      this.current = this.state.evening;
+    }
+    return (
+      <StyledParagraph>
+        {this.current}, {this.props.children}!
+      </StyledParagraph>
+    );
+  }
+}
+```
 
-### Analyzing the Bundle Size
+## Ustawienia wyglądu
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+<img src="/src/img/screenshots/PM2.jpg" title="Paweloo Music__mainPawel" height="500px">
 
-### Making a Progressive Web App
+Pierwsze 2 opcje pozwalające na zmianę nazwy użytkownika oraz zdjęcia profilowego nie są jeszcze dostępne.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+### Zmiana motywu
 
-### Advanced Configuration
+W aplikacji jest opcja zmiany motywu na ciemny oraz koloru na jeden z 9, odbywa się to poprzez Context.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+App.js
+```
+export const UserContext = createContext({});
+export const ColorContext = createContext({});
 
-### Deployment
+function App() {
+  const [theme, setTheme] = useState(lightTheme);
+  const [backColor, setBackColor] = useState("#A719D2");
+  return (
+    <UserContext.Provider value={[theme, setTheme]}>
+      <ColorContext.Provider value={[backColor, setBackColor]}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyles />
+          <PurpleTop></PurpleTop>
+          <WhiteWrapper></WhiteWrapper>
+        </ThemeProvider>
+      </ColorContext.Provider>
+    </UserContext.Provider>
+  );
+}
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+Potem dane dotyczące kolorów poszczególnych elementów są pobierane z pliku mainTheme.js na podstawie aktualnego stanu globalnego.
 
-### `yarn build` fails to minify
+mainTheme.js
+```
+export const lightTheme = {
+  body: "white",
+  header: "#6b6b6b",
+  text: "#6b6b6",
+};
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+export const darkTheme = {
+  body: "black",
+  header: "white",
+  text: "white",
+};
+```
+
+GlobalTheme.js
+```
+const [backColor] = useContext(ColorContext);
+return <Style color={backColor}></Style>;
+```
+
+WhiteWrapper.js
+```
+background-color: ${({ theme }) => theme.body};
+```
+
+<img src="/src/img/screenshots/PM3.jpg" title="Paweloo Music__mainPawel" height="500px"> <img src="/src/img/screenshots/PM4.jpg" title="Paweloo Music__mainPawel" height="500px">
+
+## Pasek wyszukiwania
+
+Nie jest on jeszcze przystosowany do wyszkuiwania danych, w przyszłości będzię pobierał wyszukiwanych artystów oraz uwory z API Spotify.
+Pasek podczas zamkniętego menu ustawień jest ukryty za głównym wprappem ze wszystkimi elementami, natomiast kiedy menu jest otwarte pasek wyszukiwania pozostaje na wierzchu gdyż dodawana jest do niego wartość OnTop.
+
+```
+const PurpleBack = styled.div`
+  width: 100%;
+  height: 400px;
+  position: fixed;
+  z-index: -1;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px 0 10px;
+
+  ${({ onTop }) =>
+    onTop &&
+    css`
+      z-index: 999;
+    `};
+`;
+```
