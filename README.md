@@ -247,3 +247,6 @@ const PurpleBack = styled.div`
 ```
 
 <img src="/src/img/screenshots/PM5.jpg" title="Paweloo Music__searchBar" height="500px">
+
+## #TODO
+W najbliższym czasie będę pracował nad tym, aby aplikacja muzyczna spełniała swoje zadanie, czyli... była w stanie odtwarzać muzykę i była w pełni dynamiczna.
