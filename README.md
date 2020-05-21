@@ -2,6 +2,8 @@
 
 Jest to projekt aplikacji muzycznej bazującej na API Spotify. Aplikacja nie jest jeszcze w pełni dynamiczna, ale wykorzystuje kilka elementów z API Spotify.
 
+#### Aplikacja została stworzona z myślą o urządzeniach mobilnych i nie jest responsywna, więc przed jej uruchomieniem zaleca się włączenie emulacji telefonu w przeglądarce. Projekt został tworzony na widoku iPhone X.
+
 ## Logowanie
 W celu przetestowania aplikacji należy zalogować się na swoje konto Spotify (poniżej dane konta testowego)<br>
 login: nxj47415@eoopy.com<br>
