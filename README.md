@@ -35,7 +35,7 @@ function redirectToSpotifyAuthentication() {
 }
 ```
 
-Po pomyślnym zalogowaniu się, oczom użytkownika ukazjue się główny interfejs aplikacji.
+Po pomyślnym zalogowaniu się, oczom użytkownika ukazuje się główny interfejs aplikacji.
 
 <img src="/src/img/screenshots/PM1.jpg" title="Paweloo Music__mainPawel" height="500px"> <img src="/src/img/screenshots/PM7.jpg" title="Paweloo Music_main_Tom" height="500px">
 
